@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="./../../node_modules/typeface-roboto/index.css">
+	<link rel="stylesheet" href="./../../node_modules/react-image-crop/dist/ReactCrop.css">
+  <style>
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+      background: #D1D9E2;
+      opacity: .75;
+      box-shadow: 0 0 20px rgba(0,0,0,.5);
+      transition: all .2s ease;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #255467;
+    }
+		div > textarea::-webkit-scrollbar {
+      box-shadow: none;
+			background: rgba(209, 217, 226, 0);
+    }
+		div:hover > textarea::-webkit-scrollbar {
+			background: rgba(209, 217, 226, .75);
+			border-radius: 4px;
+    }
+    div > textarea::-webkit-scrollbar-thumb {
+      background: rgba(37, 84, 103, 0);
+			border-radius: 4px;
+    }
+		div:hover > textarea::-webkit-scrollbar-thumb {
+      background: rgba(37, 84, 103, .75);
+    }
+    body {
+      -webkit-user-select: none;
+      overflow: hidden;
+      background-color: #67a9af;
+      margin: 0;
+    }
+	</style>
+</head>
+<body>
+  <div id="App"></div>
+</body>
+<script type="text/jsx">
+import {AppContainer} from 'react-hot-loader';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const render = () => {
+  const App = require('./app').default;
+  ReactDOM.render(<AppContainer><App /></AppContainer>, document.getElementById('App'));
+}
+
+render();
+/*if (module.hot) {
+  module.hot.accept(render);
+}*/
+</script>
+</html>
