@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import express from 'express';
 import portfinder from 'portfinder';
 import seedrandom from 'seedrandom';
+import _ from 'lodash/core';
 import {app, BrowserWindow, ipcMain} from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import {enableLiveReload} from 'electron-compile';
@@ -31,75 +32,99 @@ let port = 4480;
 
 if (isDevMode) enableLiveReload({strategy: 'react-hmr'});
 
-const tasks = queue(async (task, callback) => {
-  if(task.name == 'file_info') {
-    try {
-      const json = await ffmpeg.getInfo(task.file);
+const tasks = {
+ multi: queue(async (task, callback) => {
+   if(task.name == 'file_info') {
+     try {
+       const json = await ffmpeg.getInfo(task.file);
 
-      let size = 0;
-      let duration = 0;
+       let size = 0;
+       let duration = 0;
 
-      if(json.format != undefined) {
-        if(json.format.size > 1073741824) {
-          size = (json.format.size / 1024 / 1024 / 1024).toFixed(2) + 'gb'
-        }
-        else if(json.format.size >= 1048576) {
-          size = (json.format.size / 1024 / 1024).toFixed(0) + 'mb';
-        }
-        else {
-          size = (json.format.size / 1024).toFixed(0) + 'kb';
-        }
+       if(json.format != undefined) {
+         if(json.format.size > 1073741824) {
+           size = (json.format.size / 1024 / 1024 / 1024).toFixed(2) + 'gb'
+         }
+         else if(json.format.size >= 1048576) {
+           size = (json.format.size / 1024 / 1024).toFixed(0) + 'mb';
+         }
+         else {
+           size = (json.format.size / 1024).toFixed(0) + 'kb';
+         }
 
-        duration = json.format.duration >= 60
-          ? (json.format.duration / 60).toFixed(0) + 'm'
-          : parseFloat(json.format.duration).toFixed(0) + 's';
+         duration = json.format.duration >= 60
+           ? (json.format.duration / 60).toFixed(0) + 'm'
+           : parseFloat(json.format.duration).toFixed(0) + 's';
 
-          const id = Date.now() + files.length;
-          const fn = path.basename(task.file);
-          const im = `images/${crypto.createHash('sha1').update(fn).digest('hex')}.jpg`;
+           const id = Date.now() + files.length;
+           const fn = path.basename(task.file);
+           const im = `images/${crypto.createHash('sha1').update(fn).digest('hex')}.jpg`;
 
-          files.push(
-            {
-              id: id,
-              name: fn,
-              size: size,
-              duration: json.format.duration ? duration : '0'.toHHMMSS(),
-              thumb: im,
-              done: false,
-              format: {
-                name: json.format.format_long_name,
-                streams: json.format.nb_streams,
-                bitrate: json.format.bit_rate ? Math.round(json.format.bit_rate / 1000) : '',
-                size: json.format.size,
-                duration: json.format.duration ? json.format.duration : '0',
-                filepath: task.file
-              },
-              options: {}
-          });
-      }
-    }
-    catch(error) {
-      mainWindow.webContents.send('message', {cmd: 'error', payload: error});
-    }
-  }
-  else if(task.name == 'encoders') {
-    const d = await ffmpeg.encoders();
-    mainWindow.webContents.send('message', {cmd: 'encoders', payload: d});
-  }
-  else if(task.name == 'decoders') {
-    const d = await ffmpeg.decoders();
-    mainWindow.webContents.send('message', {cmd: 'decoders', payload: d});
+           files.push(
+             {
+               id: id,
+               name: fn,
+               size: size,
+               duration: json.format.duration ? duration : '0'.toHHMMSS(),
+               thumb: im,
+               done: false,
+               format: {
+                 name: json.format.format_long_name,
+                 streams: json.format.nb_streams,
+                 bitrate: json.format.bit_rate ? Math.round(json.format.bit_rate / 1000) : '',
+                 size: json.format.size,
+                 duration: json.format.duration ? json.format.duration : '0',
+                 filepath: task.file
+               },
+               options: {}
+           });
+       }
+     }
+     catch(error) {
+       mainWindow.webContents.send('message', {cmd: 'error', payload: error});
+     }
+   }
+   else if(task.name == 'encoders') {
+     const d = await ffmpeg.encoders();
+     mainWindow.webContents.send('message', {cmd: 'encoders', payload: d});
+   }
+   else if(task.name == 'decoders') {
+     const d = await ffmpeg.decoders();
+     mainWindow.webContents.send('message', {cmd: 'decoders', payload: d});
+   }
+
+   callback();
+ }, os.cpus().length),
+ single: queue(async (task, callback) => {
+  if(task.name == 'encode') {
+
   }
 
   callback();
-}, os.cpus().length);
+ }, 1)
+};
 
-tasks.drain(function(event) {
+tasks.multi.drain(function(event) {
     console.info('all tasks finished');
     mainWindow.webContents.send('message', {cmd: 'info', payload: files});
 });
 
-tasks.error(function(err, task) {
+tasks.single.drain(function(event) {
+    console.info('all tasks finished');
+    mainWindow.webContents.send('message', {cmd: 'info', payload: files});
+});
+
+tasks.multi.error(function(err, task) {
+    console.error('task experienced an error');
+    const snack = {
+      msg: 'Task experienced an error.',
+      severity: 'error',
+      open: true
+    };
+    mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
+});
+
+tasks.single.error(function(err, task) {
     console.error('task experienced an error');
     const snack = {
       msg: 'Task experienced an error.',
@@ -186,7 +211,7 @@ app.on('activate', async () => {
 
 function getInfo(f) {
   for(let i = 0; i < f.length; i++) {
-    tasks.push({name: 'file_info', file: f[i]});
+    tasks.multi.push({name: 'file_info', file: f[i]});
   }
 }
 
@@ -264,8 +289,8 @@ ipcMain.on('sys', async (event, arg) => {
 
     try {
       modes = await ffmpeg.hwaccels();
-      tasks.push({name: 'decoders'});
-      tasks.push({name: 'encoders'});
+      tasks.multi.push({name: 'decoders'});
+      tasks.multi.push({name: 'encoders'});
     }
     catch(error) {
       event.reply('message', {cmd: 'error', payload: error});
@@ -299,6 +324,23 @@ ipcMain.on('message', (event, arg) => {
   if(arg.cmd == 'update_task') {
     const index = files.findIndex(i => i.id == arg.payload.id);
     files[index] = arg.payload;
+  }
+  if(arg.cmd == 'encode') {
+   if(_.isEmpty(arg.payload[0].options)) {
+    const snack = {
+      msg: 'Nothing to do yet.',
+      severity: 'warning',
+      open: true
+    };
+
+    mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
+    return;
+   }
+
+   console.log(arg.payload);
+   if(arg.payload[0].streams) {
+    console.log(arg.payload[0].streams)
+   }
   }
 })
 

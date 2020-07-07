@@ -302,11 +302,9 @@ export default function App(props) {
       }
 
       fn = fn + event.target.value;
-
       tasks[index].options.outFile = fn;
-
       ipcRenderer.send('message', {cmd: 'update_task', payload: tasks[index]});
-      
+
       if(i == 0) {
         setOutFile(fn);
         ipcRenderer.send('message', {cmd: 'full_info', payload: tasks[index]});
@@ -344,6 +342,19 @@ export default function App(props) {
       ipcRenderer.send('message', {cmd: 'update_task', payload: tasks[index]});
       ipcRenderer.send('message', {cmd: 'full_info', payload: tasks[index]});
     });
+  }
+
+  function encode() {
+    if(selected.length) {
+      ipcRenderer.send('message', {cmd: 'encode', payload: selected});
+    }
+    else {
+     setSnack({
+       msg: 'No Media selected',
+       severity: 'warning',
+       open: true
+     });
+    }
   }
 
   const matches1300 = useMediaQuery('(max-width:1360px)');
@@ -399,7 +410,7 @@ export default function App(props) {
                 </Button>
               }
 						  <Button className={classes.button}>Options</Button>
-              <Button className={classes.button}>Encode</Button>
+              <Button className={classes.button} onClick={encode}>Encode</Button>
 		       </ButtonGroup>
           <Grid container spacing={2} className={classes.offset} alignItems='flex-start' justify='space-evenly'>
            <AppBar position="static" style={{marginBottom: '.5rem', borderRadius: 4}}>

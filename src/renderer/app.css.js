@@ -1,10 +1,5 @@
 import { makeStyles, createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
-/*breakpoints: {
-  keys: ['xs', 'sm', 'md', 'lg', 'xl'],
-  values: [0, 600, 900, 1280, 1920]
-},
-*/
 let Theme = createMuiTheme({
   palette: {
     primary: {
