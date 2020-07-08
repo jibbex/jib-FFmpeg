@@ -43,7 +43,7 @@
   <div id="App"></div>
 </body>
 <script type="text/jsx">
-import {AppContainer} from 'react-hot-loader';
+import {AppContainer, patch} from 'react-hot-loader';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -53,8 +53,8 @@ const render = () => {
 }
 
 render();
-/*if (module.hot) {
+if (module.hot) {
   module.hot.accept(render);
-}*/
+}
 </script>
 </html>

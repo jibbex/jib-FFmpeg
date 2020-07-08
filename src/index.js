@@ -338,9 +338,14 @@ ipcMain.on('message', (event, arg) => {
    }
 
    console.log(arg.payload);
+   if(arg.payload[0].options) {
+    console.log(arg.payload[0].options)
+   }
    if(arg.payload[0].streams) {
     console.log(arg.payload[0].streams)
    }
+
+   ffmpeg.encode(arg.payload[0]);
   }
 })
 
@@ -361,38 +366,44 @@ router.get('/:id', async (req, res) => {
     const ext = files[index].name.split('.').pop();
     const img = files[index].thumb;
 
-    if(Formats.video.find(el => el == ext)) {
+    try {
+      await fsPromises.access(img)
+      res.redirect(`/${img}?key=${token}`)
+    }
+    catch(err) {
       try {
-        await fsPromises.access(img)
-        res.redirect(`/${img}?key=${token}`)
+       if(Formats.video.find(el => el == ext)) {
+        await ffmpeg.extractJPEG(path, img, '00:00:10.00');
+        res.redirect(`/${img}?key=${token}`);
+       }
+       else if(Formats.audio.find(el => el == ext)) {
+        await ffmpeg.extractJPEG(path, img, '00:00:00.00');
+        res.redirect(`/${img}?key=${token}`);
+       }
+       else {
+         res.status(404).send(`<h1>Not Found</h1><p>File not loaded</p>`);
+       }
+
       }
-      catch(err) {
+      catch(error) {
+        res.status(404).send('Not Found');
+
+        const snack = {
+          msg: 'Something went wrong during the creation of the thumbnail.',
+          severity: 'error',
+          open: true
+        };
+
+        mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
+
         try {
-          await ffmpeg.extractJPEG(path, img, '00:00:10.00');
-          res.redirect(`/${img}?key=${token}`);
+          await fsPromises.access(img);
+          await rm(img);
         }
         catch(error) {
-          res.status(404).send('Not Found');
-
-          const snack = {
-            msg: 'Something went wrong during the creation of the thumbnail.',
-            severity: 'error',
-            open: true
-          };
-
-          mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
-
-          try {
-            await fsPromises.access(img);
-            await rm(img);
-          }
-          catch(error) {
-            console.error(error)
-          }
+          console.error(error)
         }
       }
-    } else {
-      res.status(404).send(`<h1>Not Found</h1><p>File not loaded</p>`);
     }
   }
 });

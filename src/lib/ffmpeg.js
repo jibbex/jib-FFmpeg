@@ -58,6 +58,67 @@ class FFmpeg {
 		}
 	}
 
+	async encode(task) {
+		try {
+			const opts = task.options;
+			const container = FFmpeg.getFormat(opts.container);
+			const args = [];
+
+			if(opts.acceleration && opts.acceleration !== 'no-hw') {
+				args.push(`-hwaccel ${opts.acceleration}`);
+			}
+
+			args.push(`-i "${task.format.filepath}"`);
+			args.push(`-f ${container}`);
+
+			if(opts.time_range) {
+				args.push(`-ss ${opts.time_range[0]}`);
+				args.push(`-to ${opts.time_range[1]}`);
+			}
+			else {
+				args.push('-ss 0');
+			}
+
+			if(task.streams) {
+				task.streams.forEach((stream, i) => {
+					args.push(`-map 0:${i}`);
+						if(stream.options) {
+							if(stream.options.codec_name) {
+								let codec = '';
+								if(stream.codec_type == 'video') {
+										codec = `-c:v:0`;
+										args.push(`-map 0:${i}`);
+								}
+								else if(stream.codec_type == 'audio') {
+									codec = `-c:a:0`;
+								}
+								args.push(`${codec} ${stream.options.codec_name}`)
+							}
+						}
+				});
+			}
+
+			args.push(`-y "${opts.outFile}"`)
+			console.log(args);
+			const proc = spawn(this.getBin('ffmpeg'), args, {shell: true});
+
+			proc.on('error', data => {
+				console.error(data.toString());
+			});
+
+			proc.stderr.on('data', (data) => {
+			  console.error(`${data}`);
+			});
+
+			proc.on('close', (code) => {
+			  console.log(`child process exited with code ${code}`);
+			});
+		}
+		catch(error) {
+			throw error;
+		}
+	}
+
 	async getInfo(file) {
 		try {
 			const info = await execAsync(`${this.getBin('ffprobe')} -print_format json -show_format "${file}"`);
@@ -85,6 +146,13 @@ class FFmpeg {
 		}
 		catch(error) {
 			throw error;
+		}
+	}
+
+	static getFormat(container) {
+		switch(container) {
+			case '.mkv': return 'matroska';
+			default: return container.substr(1);
 		}
 	}
 

@@ -328,7 +328,12 @@ export default function App(props) {
   function onCropChange(sizes) {
     if(selected.length) {
       const index = tasks.findIndex(i => i.id == selected[0].id);
-      tasks[index].options.sizes = sizes;
+      if(sizes !== null) {
+       tasks[index].options.sizes = sizes;
+      }
+      else {
+       delete tasks[index].options.sizes;
+      }
       ipcRenderer.send('message', {cmd: 'update_task', payload: tasks[index]});
       setSize(size);
     }

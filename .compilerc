@@ -3,7 +3,7 @@
     "development": {
       "application/javascript": {
         "presets": [
-          ["env", { "targets": { "electron": "8.1.1" } }],
+          ["env", { "targets": { "electron": "8.2.4" } }],
           "react"
         ],
         "plugins": ["transform-async-to-generator", "transform-es2015-classes", "react-hot-loader/babel"],
@@ -13,7 +13,7 @@
     "production": {
       "application/javascript": {
         "presets": [
-          ["env", { "targets": { "electron": "8.1.1" } }],
+          ["env", { "targets": { "electron": "8.2.4" } }],
           "react"
         ],
         "plugins": ["transform-async-to-generator", "transform-es2015-classes"],

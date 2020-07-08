@@ -26,7 +26,7 @@ export default function VideoPlayer(props) {
 	const [cropping, setCropping] = useState(false);
 	const [src, setSrc] = useState(false);
 	const [current, setCurrent] = useState(0);
- 	const [crop, setCrop] = useState({unit: '%', width: 100, height: 100});
+ const [crop, setCrop] = useState({unit: '%', width: 100, height: 100});
 	const video = useRef(null);
 	const classes = style();
 
@@ -143,10 +143,6 @@ export default function VideoPlayer(props) {
 				parent: {
 					width: rect.width,
 					height: rect.height
-				},
-				video: {
-					width: video.current.videoWidth,
-					height: video.current.videoHeight
 				}
 			}
 		);
@@ -157,9 +153,9 @@ export default function VideoPlayer(props) {
 	    className={classes.video}
 	    loop
 	    ref={video}
-			style={(!props.selected ? vstyle.disabled : {})}
-			poster={props.selected ? `http://localhost:${props.port}/${props.selected.id}?key=${token}` : ''}
-			preload='true'
+					style={(!props.selected ? vstyle.disabled : {})}
+					poster={props.selected ? `http://localhost:${props.port}/${props.selected.id}?key=${token}` : ''}
+					preload='true'
 	    onLoadStart={e => {
 	      e.target.dispatchEvent(new Event('medialoaded', { bubbles: true }));
 	    }}>

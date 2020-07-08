@@ -55,9 +55,9 @@ export default function StreamOptions(props) {
 	if(codecs[stream.codec_type]) {
 		if((hwaccel == 'cuda' || hwaccel == 'cuvid')
 			&& (container == '.mp4' || container == '.mkv' || container == '.mov')) {
-				codecs.video = Object.assign({h264_nvec: 'h264_nvec (cuda/cuvid)'}, codecs.video);
+				codecs.video = Object.assign({h264_nvenc: 'h264_nvenc (cuda/cuvid)'}, codecs.video);
 		}
-		else if(stream.options.codec_name == 'h264_nvec') {
+		else if(stream.options.codec_name == 'h264_nvenc') {
 			delete stream.options.codec_name;
 		}
 	}
