@@ -1,15 +1,15 @@
-import {ipcRenderer, remote} from 'electron';
+import { ipcRenderer, remote } from 'electron';
 import path from 'path';
 import url from 'url';
 import fs from 'fs';
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import {
   Button, Fab, Paper, Grid, Typography, IconButton, Popover, AppBar, ButtonGroup,
   CssBaseline, Fade, Tooltip, Zoom, Divider, Slider, Toolbar
 } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import {ThemeProvider} from '@material-ui/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import AddIcon from '@material-ui/icons/NoteAdd';
 import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
 import InfoIcon from '@material-ui/icons/Info';
@@ -21,8 +21,8 @@ import Format from './components/format';
 import HwAccel from './components/hw-accel';
 import StreamOptions from './components/stream-options';
 import Drawer from './components/responsive-drawer';
-import {Style, Theme} from './app.css';
-import {Formats} from './../lib/formats';
+import { Style, Theme } from './app.css';
+import { Formats } from './../lib/formats';
 
 String.prototype.toHHMMSS = function() {
   const sec_num = parseInt(this, 10);

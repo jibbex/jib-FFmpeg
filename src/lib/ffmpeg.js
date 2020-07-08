@@ -86,13 +86,23 @@ class FFmpeg {
 							if(stream.options.codec_name) {
 								let codec = '';
 								if(stream.codec_type == 'video') {
-										codec = `-c:v:0`;
-										args.push(`-map 0:${i}`);
+										codec = `-c:v:${i}`;
 								}
 								else if(stream.codec_type == 'audio') {
-									codec = `-c:a:0`;
+									codec = `-c:a:${i}`;
 								}
-								args.push(`${codec} ${stream.options.codec_name}`)
+								args.push(`${codec} ${stream.options.codec_name}`);
+							}
+
+							if(stream.options.bit_rate) {
+								let bitrate = '';
+								if(stream.codec_type == 'video') {
+										bitrate = `-b:v:${i}`;
+								}
+								else if(stream.codec_type == 'audio') {
+									bitrate = `-b:a:${i}`;
+								}
+								args.push(`${bitrate} ${stream.options.bit_rate}k`);
 							}
 						}
 				});

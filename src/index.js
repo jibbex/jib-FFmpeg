@@ -10,11 +10,11 @@ import seedrandom from 'seedrandom';
 import _ from 'lodash/core';
 import {app, BrowserWindow, ipcMain} from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-import {enableLiveReload} from 'electron-compile';
-import {queue} from 'async';
+import { enableLiveReload } from 'electron-compile';
+import { queue } from 'async';
 import windowStateKeeper from 'electron-window-state';
 import ffmpeg from './lib/ffmpeg';
-import {Formats} from './lib/formats';
+import { Formats } from './lib/formats';
 
 const router = express.Router();
 const server = express();
@@ -30,7 +30,7 @@ let token = null;
 let files = [];
 let port = 4480;
 
-if (isDevMode) enableLiveReload({strategy: 'react-hmr'});
+if (isDevMode) enableLiveReload( { strategy: 'react-hmr' } );
 
 const tasks = {
  multi: queue(async (task, callback) => {

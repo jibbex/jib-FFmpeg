@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
-import {Theme} from './../app.css';
+import { Theme } from './../app.css';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((Theme) => ({
 	container: {
 		position: 'relative',
 		display: 'flex',

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import {
 	Grid, Paper, Button, ButtonGroup, Typography,  Tooltip
@@ -109,8 +109,6 @@ export default function VideoPlayer(props) {
 						video.current.currentTime = props.time[0] ? props.time[0] : 0;
 						await video.current.play();
 						setIsPlaying(true);
-
-						console.log(`res: ${video.current.videoWidth} x ${video.current.videoHeight}`);
 					}
 			}
 			else if(isPaused && video) {
