@@ -130,9 +130,9 @@ export default function StreamOptions(props) {
 					<Typography variant="h4" className={appCss.h4} style={{display: 'flex', alignItems: 'center'}}>
 						<span style={{flexGrow: 2}}>{stream.codec_type.capitalize()}</span>
 						<Switch
-			        checked={active}
+			    checked={active}
 							disabled={!codecs[stream.codec_type]}
-			        onChange={() => {update(!active, stream, 'active'); setActive(!active);}}
+			    onChange={() => {update(!active, stream, 'active'); setActive(!active);}}
 							color="primary"/>
 					</Typography>
 					<Divider style={{marginBottom: Theme.spacing(4)}} />

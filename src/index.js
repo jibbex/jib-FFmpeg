@@ -8,7 +8,7 @@ import express from 'express';
 import portfinder from 'portfinder';
 import seedrandom from 'seedrandom';
 import _ from 'lodash/core';
-import {app, BrowserWindow, ipcMain} from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 import { queue } from 'async';
@@ -97,7 +97,22 @@ const tasks = {
  }, os.cpus().length),
  single: queue(async (task, callback) => {
   if(task.name == 'encode') {
+   ffmpeg.on('progress', (data) => {
+    setImmediate(() => {
+     console.log(data);
+    });
+   });
 
+   const code = await ffmpeg.encode(task.file);
+
+   console.log(task.file);
+   if(task.file.options) {
+    console.log(task.file.options)
+   }
+   if(task.file.streams) {
+    console.log(task.file.streams)
+   }
+   console.log(`exit code: ${code}`);
   }
 
   callback();
@@ -215,6 +230,23 @@ function getInfo(f) {
   }
 }
 
+function encode(f) {
+ for(let i = 0; i < f.length; i++) {
+  if(_.isEmpty(f[i].options)) {
+   const snack = {
+     msg: 'Nothing to do yet.',
+     severity: 'warning',
+     open: true
+   };
+
+   mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
+   return;
+  }
+
+  tasks.single.push({name: 'encode', file: f[i]});
+ }
+}
+
 function removeFiles(event, f) {
   f.forEach((file) => {
     const index = files.findIndex(i => i.id == file.id)
@@ -326,26 +358,7 @@ ipcMain.on('message', (event, arg) => {
     files[index] = arg.payload;
   }
   if(arg.cmd == 'encode') {
-   if(_.isEmpty(arg.payload[0].options)) {
-    const snack = {
-      msg: 'Nothing to do yet.',
-      severity: 'warning',
-      open: true
-    };
-
-    mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
-    return;
-   }
-
-   console.log(arg.payload);
-   if(arg.payload[0].options) {
-    console.log(arg.payload[0].options)
-   }
-   if(arg.payload[0].streams) {
-    console.log(arg.payload[0].streams)
-   }
-
-   ffmpeg.encode(arg.payload[0]);
+   encode(arg.payload);
   }
 })
 

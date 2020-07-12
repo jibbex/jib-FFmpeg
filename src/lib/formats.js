@@ -6,18 +6,18 @@ const Formats = {
 const Codecs = {
 	video: new Map(
 		[
-			['x265', 'libx265'], ['h264', 'libx264'], ['xvid', 'libxvid'],
-			['vpx', 'libvpx'], ['vp9', 'libvpx-vp9'], ['mpeg4', 'mpeg4'],
-			['mpeg1', 'mpeg1video'], ['mpeg2', 'mpeg2video'],
-			['theora', 'libtheora']
+			['libx265', 'x265'], ['libx264', 'h264'], ['libxvid', 'xvid'],
+			['libvpx', 'vpx'], ['libvpx-vp9', 'vp9'], ['mpeg4', 'mpeg4'],
+			['mpeg1video', 'mpeg1'], ['mpeg2video', 'mpeg2'],
+			['libtheora', 'theora']
 		]
 	),
 	audio: new Map(
 		[
-			['fdk_aac', 'libfdk_aac'], ['f_aac', 'libfaac'], ['aac', 'aac'],
+			['libfdk_aac', 'fdk_aac'], ['libfaac', 'f_aac'], ['aac', 'aac'],
 			['ac3', 'ac3'], ['flac', 'flac'], ['mp2', 'mp2'],
-			['vorbis', 'libvorbis'], ['mp3', 'libmp3lame'],
-			['wav', 'adpcm_ima_wav']
+			['libvorbis', 'vorbis'], ['libmp3lame', 'mp3'],
+			['adpcm_ima_wav', 'wav']
 		]
 	)
 }
