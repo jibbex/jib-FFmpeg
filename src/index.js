@@ -92,7 +92,7 @@ const tasks =  queue(async (task, callback) => {
     mainWindow.webContents.send('message', {cmd: 'decoders', payload: d});
   }
   else if(task.name == 'encode') {
-   try {    
+   try {
     ffmpeg.on('progress', (progress) => {
      setImmediate(() => {
       if(isDevMode) console.info(`${progress} %`);
@@ -164,7 +164,7 @@ const createWindow = async () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    title: 'guif-FFmpeg',
+    title: 'jib-FFmpeg',
     backgroundColor: '#67a9af',
     show: false,
     webPreferences: {
