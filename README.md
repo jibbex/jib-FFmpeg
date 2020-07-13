@@ -1,4 +1,4 @@
-<img src="https://github.com/jibbex/yt-Download/blob/master/assets/images/icon.png" align="right" width="128" height="128">
+<img src="https://github.com/jibbex/jib-FFmpeg/blob/master/assets/icon.png" align="right" width="128" height="128">
 
 # jib-FFmpeg
 
