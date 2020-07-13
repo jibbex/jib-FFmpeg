@@ -53,8 +53,16 @@ const Style = makeStyles((Theme) => ({
       contrastText: '#fff',
     }
   },
+  '@global': {
+    '.MuiLinearProgress-barColorPrimary': {
+      background: '#1e6f90'
+    },
+  },
   root: {
     flexGrow: 0,
+  },
+  progress: {
+    backgroundColor: 'rgba(178, 188, 193, .6)'
   },
   paper: {
     padding: Theme.spacing(2),
@@ -173,7 +181,7 @@ const Style = makeStyles((Theme) => ({
     display: 'flex',
     minWidth:'380px',
     flexDirection: 'column'
-  },
+  }
 }));
 
 export { Theme, Style};

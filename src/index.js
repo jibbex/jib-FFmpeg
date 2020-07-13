@@ -36,7 +36,6 @@ const tasks =  queue(async (task, callback) => {
   if(task.name == 'file_info') {
     try {
       const json = await ffmpeg.getInfo(task.file);
-      console.log(json);
       let size = 0;
       let duration = 0;
 
@@ -93,10 +92,11 @@ const tasks =  queue(async (task, callback) => {
     mainWindow.webContents.send('message', {cmd: 'decoders', payload: d});
   }
   else if(task.name == 'encode') {
-   try {
+   try {    
     ffmpeg.on('progress', (progress) => {
      setImmediate(() => {
-      console.log(`${progress} %`);
+      if(isDevMode) console.info(`${progress} %`);
+      mainWindow.webContents.send('message', {cmd: 'encoding_progress', payload: progress});
      });
     });
 
@@ -108,21 +108,23 @@ const tasks =  queue(async (task, callback) => {
       mainWindow.webContents.send('message', {cmd: 'encoding_done', payload: files[index]});
 
       const snack = {
-        msg: `${task.file.name} finished`,
+        msg: `${task.file.options.outFile} finished`,
         severity: 'success',
         open: true
       };
       mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
     }
 
-    console.log(task.file);
-    if(task.file.options) {
-     console.log(task.file.options)
+    if(isDevMode) {
+     console.log(task.file);
+     if(task.file.options) {
+      console.log(task.file.options)
+     }
+     if(task.file.streams) {
+      console.log(task.file.streams)
+     }
+     console.log(`exit code: ${code}`);
     }
-    if(task.file.streams) {
-     console.log(task.file.streams)
-    }
-    console.log(`exit code: ${code}`);
    }
    catch(error) {
     console.error(error);
@@ -134,11 +136,11 @@ const tasks =  queue(async (task, callback) => {
 
 
 tasks.drain(function(event) {
-    console.info('all tasks finished');
+    if(isDevMode) console.info('all tasks finished');
 });
 
 tasks.error(function(err, task) {
-    console.error('task experienced an error');
+    if(isDevMode) console.error('task experienced an error');
     const snack = {
       msg: 'Task experienced an error.',
       severity: 'error',
@@ -309,7 +311,7 @@ async function getStreamInfo(event, file, cmd) {
     event.reply('message', {cmd: 'stream_info', payload: files[index]});
   }
   catch(error) {
-    console.error(error);
+    if(isDevMode) console.error(error);
     event.reply('message', {cmd: 'error', payload: error});
   }
 }

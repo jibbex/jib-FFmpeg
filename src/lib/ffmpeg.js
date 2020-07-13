@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import util from 'util';
 import os from 'os';
-import ev from 'events';
 import {exec, spawn} from 'child_process';
 
 const execAsync = util.promisify(exec);
@@ -10,7 +9,7 @@ const execAsync = util.promisify(exec);
 class FFmpeg {
 	constructor() {
 		this._path = null;
-		this._event = new ev();
+		this._on = new Object();
 	}
 
 	get ffmpegPath() {
@@ -41,7 +40,7 @@ class FFmpeg {
 	}
 
 	on(event, callback) {
-		this._event.on(event, callback);
+		this._on[event] = callback;
 	}
 
 	async decoders() {
@@ -128,11 +127,29 @@ class FFmpeg {
 											args.push(`-ac:a:${ia} ${stream.options.channels}`);
 										}
 										if(stream.options.frequency) {
-											//args.push(`-ac:a:${index} ${stream.options.frequency}`);
+											args.push(`-ar:a:${ia} ${stream.options.frequency}`);
 										}
 										ia += 1;
 									}
 									else if(stream.codec_type == 'video') {
+										if(opts.sizes) {
+											const { percentCrop } = opts.sizes;
+											const x = stream.width * (percentCrop.x / 100);
+											const y = stream.height * (percentCrop.y / 100);
+											const w = stream.width * (percentCrop.width / 100);
+											const h = stream.height * (percentCrop.height / 100);
+
+											args.push(`-filter:v:${iv} "crop=${w}:${h}:${x}:${y}"`);
+										}
+										else {
+											if(stream.options.framsize) {
+												const size = stream.options.framsize.replace('x', ':');
+												args.push(`-filter:v:${iv} "scale=${size}"`);
+											}
+											if(stream.options.aspec_ratio) {
+												args.push(`-aspect:v:${iv} ${stream.options.aspec_ratio}`);
+											}
+										}
 										iv += 1;
 									}
 									index += 1;
@@ -147,26 +164,29 @@ class FFmpeg {
 				const proc = spawn(this.getBin('ffmpeg'), args, {shell: true});
 
 				proc.stderr.on('data', (data) => {
-					const str = data.toString();
-					const i = str.indexOf('time=') + 5;
+					if(this._on.progress) {
+						const str = data.toString();
+						const i = str.indexOf('time=') + 5;
 
-					if(i > 4) {
-						let timecode = 0;
-						let time = str.substr(i, 11);
+						if(i > 4) {
+							let timecode = 0;
+							let time = str.substr(i, 11);
 
-						time = time.split(':');
+							time = time.split(':');
 
-						let h = parseInt(time[0]);
-						let m = parseInt(time[1]);
-						let s = parseInt(time[2].split('.')[0]);
+							let h = parseInt(time[0]);
+							let m = parseInt(time[1]);
+							let s = parseInt(time[2].split('.')[0]);
 
-						if(h > 0) { timecode = h * 60 * 60 }
-						if(m > 0) { timecode += m * 60 }
-						if(s > 0) { timecode += s }
+							if(h > 0) { timecode = h * 60 * 60 }
+							if(m > 0) { timecode += m * 60 }
+							if(s > 0) { timecode += s }
 
-						const progress = parseInt(timecode / duration * 100);
+							const progress = parseInt(timecode / duration * 100);
 
-						this._event.emit('progress', progress);
+
+								this._on.progress(progress);
+							}
 					}
 				});
 

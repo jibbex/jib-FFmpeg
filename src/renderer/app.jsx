@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import {
   Button, Fab, Paper, Grid, Typography, IconButton, Popover, AppBar, ButtonGroup,
-  CssBaseline, Fade, Tooltip, Zoom, Divider, Slider, Toolbar
+  CssBaseline, Fade, Tooltip, Zoom, Divider, Slider, Toolbar, LinearProgress
 } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { ThemeProvider } from '@material-ui/styles';
@@ -71,6 +71,7 @@ export default function App(props) {
   const [streamInfo, setStreamInfo] = useState([]);
   const [time, setTime] = useState([0, 100]);
   const [isSpooling, setIsSpooling] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [container, setContainer] = useState('');
   const [hwAccel, setHwAccel] = useState('');
   const [outFile, setOutFile] = useState('');
@@ -112,6 +113,10 @@ export default function App(props) {
       }
       if(arg.cmd == 'encoding_done') {
        update(arg.payload);
+       setProgress(0);
+      }
+      if(arg.cmd == 'encoding_progress') {
+       setProgress(arg.payload);
       }
     })
 
@@ -415,8 +420,8 @@ export default function App(props) {
                     <PlaylistPlayIcon />
                 </Button>
               }
-						  <Button className={classes.button}>Options</Button>
-              <Button className={classes.button} onClick={encode}>Encode</Button>
+          <Button className={classes.button}>Options</Button>
+          <Button className={classes.button} onClick={encode}>Encode</Button>
 		       </ButtonGroup>
           <Grid container spacing={2} className={classes.offset} alignItems='flex-start' justify='space-evenly'>
            <AppBar position="static" style={{marginBottom: '.5rem', borderRadius: 4}}>
@@ -431,6 +436,11 @@ export default function App(props) {
                  <InfoIcon />
                </IconButton>
              </Toolbar>
+             <LinearProgress
+              variant="determinate"
+              color="primary"
+              className={classes.progress}
+              value={progress}/>
            </AppBar>
            <Grid item md={12} lg={matches1300 ? 12 : matches1480 ? 7 : 8} style={{display: 'flex', width: '100%', flexDirection:'column'}}>
              <Paper className={classes.paper} style={{display: 'flex', width: '100%', flexDirection: 'column', overflowX: 'auto', background: 'rgba(255,255,255,.9)'}}>
