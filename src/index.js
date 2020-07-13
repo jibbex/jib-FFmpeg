@@ -32,114 +32,112 @@ let port = 4480;
 
 if (isDevMode) enableLiveReload( { strategy: 'react-hmr' } );
 
-const tasks = {
- multi: queue(async (task, callback) => {
-   if(task.name == 'file_info') {
-     try {
-       const json = await ffmpeg.getInfo(task.file);
+const tasks =  queue(async (task, callback) => {
+  if(task.name == 'file_info') {
+    try {
+      const json = await ffmpeg.getInfo(task.file);
+      console.log(json);
+      let size = 0;
+      let duration = 0;
 
-       let size = 0;
-       let duration = 0;
+      if(json.format != undefined) {
+        if(json.format.size > 1073741824) {
+          size = (json.format.size / 1024 / 1024 / 1024).toFixed(2) + 'gb'
+        }
+        else if(json.format.size >= 1048576) {
+          size = (json.format.size / 1024 / 1024).toFixed(0) + 'mb';
+        }
+        else {
+          size = (json.format.size / 1024).toFixed(0) + 'kb';
+        }
 
-       if(json.format != undefined) {
-         if(json.format.size > 1073741824) {
-           size = (json.format.size / 1024 / 1024 / 1024).toFixed(2) + 'gb'
-         }
-         else if(json.format.size >= 1048576) {
-           size = (json.format.size / 1024 / 1024).toFixed(0) + 'mb';
-         }
-         else {
-           size = (json.format.size / 1024).toFixed(0) + 'kb';
-         }
+        duration = json.format.duration >= 60
+          ? (json.format.duration / 60).toFixed(0) + 'm'
+          : parseFloat(json.format.duration).toFixed(0) + 's';
 
-         duration = json.format.duration >= 60
-           ? (json.format.duration / 60).toFixed(0) + 'm'
-           : parseFloat(json.format.duration).toFixed(0) + 's';
+          const id = Date.now() + files.length;
+          const fn = path.basename(task.file);
+          const im = `images/${crypto.createHash('sha1').update(fn).digest('hex')}.jpg`;
 
-           const id = Date.now() + files.length;
-           const fn = path.basename(task.file);
-           const im = `images/${crypto.createHash('sha1').update(fn).digest('hex')}.jpg`;
-
-           files.push(
-             {
-               id: id,
-               name: fn,
-               size: size,
-               duration: json.format.duration ? duration : '0'.toHHMMSS(),
-               thumb: im,
-               done: false,
-               format: {
-                 name: json.format.format_long_name,
-                 streams: json.format.nb_streams,
-                 bitrate: json.format.bit_rate ? Math.round(json.format.bit_rate / 1000) : '',
-                 size: json.format.size,
-                 duration: json.format.duration ? json.format.duration : '0',
-                 filepath: task.file
-               },
-               options: {}
-           });
-       }
-     }
-     catch(error) {
-       mainWindow.webContents.send('message', {cmd: 'error', payload: error});
-     }
-   }
-   else if(task.name == 'encoders') {
-     const d = await ffmpeg.encoders();
-     mainWindow.webContents.send('message', {cmd: 'encoders', payload: d});
-   }
-   else if(task.name == 'decoders') {
-     const d = await ffmpeg.decoders();
-     mainWindow.webContents.send('message', {cmd: 'decoders', payload: d});
-   }
-
-   callback();
- }, os.cpus().length),
- single: queue(async (task, callback) => {
-  if(task.name == 'encode') {
-   ffmpeg.on('progress', (data) => {
-    setImmediate(() => {
-     console.log(data);
+          files.push(
+            {
+              id: id,
+              name: fn,
+              size: size,
+              duration: json.format.duration ? duration : '0'.toHHMMSS(),
+              thumb: im,
+              done: false,
+              format: {
+                name: json.format.format_long_name,
+                streams: json.format.nb_streams,
+                bitrate: json.format.bit_rate ? Math.round(json.format.bit_rate / 1000) : '',
+                size: json.format.size,
+                duration: json.format.duration ? json.format.duration : '0',
+                filepath: task.file
+              },
+              options: {}
+          });
+          mainWindow.webContents.send('message', {cmd: 'info', payload: files});
+      }
+    }
+    catch(error) {
+      mainWindow.webContents.send('message', {cmd: 'error', payload: error});
+    }
+  }
+  else if(task.name == 'encoders') {
+    const d = await ffmpeg.encoders();
+    mainWindow.webContents.send('message', {cmd: 'encoders', payload: d});
+  }
+  else if(task.name == 'decoders') {
+    const d = await ffmpeg.decoders();
+    mainWindow.webContents.send('message', {cmd: 'decoders', payload: d});
+  }
+  else if(task.name == 'encode') {
+   try {
+    ffmpeg.on('progress', (progress) => {
+     setImmediate(() => {
+      console.log(`${progress} %`);
+     });
     });
-   });
 
-   const code = await ffmpeg.encode(task.file);
+    const code = await ffmpeg.encode(task.file);
 
-   console.log(task.file);
-   if(task.file.options) {
-    console.log(task.file.options)
+    const index = files.findIndex(i => i.id == task.file.id);
+    if(index !== -1) {
+      files[index].done = true;
+      mainWindow.webContents.send('message', {cmd: 'encoding_done', payload: files[index]});
+
+      const snack = {
+        msg: `${task.file.name} finished`,
+        severity: 'success',
+        open: true
+      };
+      mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
+    }
+
+    console.log(task.file);
+    if(task.file.options) {
+     console.log(task.file.options)
+    }
+    if(task.file.streams) {
+     console.log(task.file.streams)
+    }
+    console.log(`exit code: ${code}`);
    }
-   if(task.file.streams) {
-    console.log(task.file.streams)
+   catch(error) {
+    console.error(error);
    }
-   console.log(`exit code: ${code}`);
   }
 
   callback();
- }, 1)
-};
+}, os.cpus().length);
 
-tasks.multi.drain(function(event) {
+
+tasks.drain(function(event) {
     console.info('all tasks finished');
-    mainWindow.webContents.send('message', {cmd: 'info', payload: files});
 });
 
-tasks.single.drain(function(event) {
-    console.info('all tasks finished');
-    mainWindow.webContents.send('message', {cmd: 'info', payload: files});
-});
-
-tasks.multi.error(function(err, task) {
-    console.error('task experienced an error');
-    const snack = {
-      msg: 'Task experienced an error.',
-      severity: 'error',
-      open: true
-    };
-    mainWindow.webContents.send('message', {cmd: 'msg', payload: snack});
-});
-
-tasks.single.error(function(err, task) {
+tasks.error(function(err, task) {
     console.error('task experienced an error');
     const snack = {
       msg: 'Task experienced an error.',
@@ -225,12 +223,14 @@ app.on('activate', async () => {
 });
 
 function getInfo(f) {
-  for(let i = 0; i < f.length; i++) {
-    tasks.multi.push({name: 'file_info', file: f[i]});
-  }
+ tasks.concurrency = os.cpus().length;
+ for(let i = 0; i < f.length; i++) {
+   tasks.push({name: 'file_info', file: f[i]});
+ }
 }
 
 function encode(f) {
+ tasks.concurrency = 1;
  for(let i = 0; i < f.length; i++) {
   if(_.isEmpty(f[i].options)) {
    const snack = {
@@ -243,7 +243,7 @@ function encode(f) {
    return;
   }
 
-  tasks.single.push({name: 'encode', file: f[i]});
+  tasks.push({name: 'encode', file: f[i]});
  }
 }
 
@@ -254,7 +254,6 @@ function removeFiles(event, f) {
       files.splice(index, 1);
     }
   })
-
   event.reply('message', {cmd: 'info', payload: files});
 }
 
@@ -321,8 +320,9 @@ ipcMain.on('sys', async (event, arg) => {
 
     try {
       modes = await ffmpeg.hwaccels();
-      tasks.multi.push({name: 'decoders'});
-      tasks.multi.push({name: 'encoders'});
+      tasks.concurrency = os.cpus().length;
+      tasks.push({name: 'decoders'});
+      tasks.push({name: 'encoders'});
     }
     catch(error) {
       event.reply('message', {cmd: 'error', payload: error});

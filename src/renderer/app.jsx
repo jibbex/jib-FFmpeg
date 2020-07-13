@@ -110,6 +110,9 @@ export default function App(props) {
         dlg.showMessageBox(remote.getCurrentWindow(), {type: 'error', title: 'Error', message: err.message});
         throw err;
       }
+      if(arg.cmd == 'encoding_done') {
+       update(arg.payload);
+      }
     })
 
     return () => {
@@ -205,7 +208,6 @@ export default function App(props) {
         } else {
           update(false, {container: newSelected.length < 1 ? '' : '***'});
         }
-
       }
       else {
         const index = tasks.findIndex(i => i.id == id);
@@ -218,7 +220,6 @@ export default function App(props) {
           update();
         }
       }
-
       setSelected(newSelected);
     },
     addSelected: (event, id) => {

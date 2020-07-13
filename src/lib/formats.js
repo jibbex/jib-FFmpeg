@@ -14,8 +14,7 @@ const Codecs = {
 	),
 	audio: new Map(
 		[
-			['libfdk_aac', 'fdk_aac'], ['libfaac', 'f_aac'], ['aac', 'aac'],
-			['ac3', 'ac3'], ['flac', 'flac'], ['mp2', 'mp2'],
+			['aac', 'aac'], ['ac3', 'ac3'], ['flac', 'flac'], ['mp2', 'mp2'],
 			['libvorbis', 'vorbis'], ['libmp3lame', 'mp3'],
 			['adpcm_ima_wav', 'wav']
 		]
@@ -53,24 +52,24 @@ function GetCodecs(format) {
 	switch(format) {
 		case 'webm':
 			_codecs = {
-				video: Object.assign(Codecs.video.getKeyVal('vpx'), Codecs.video.getKeyVal('vp9')),
-				audio: Codecs.audio.getKeyVal('vorbis')
+				video: Object.assign(Codecs.video.getKeyVal('libvpx'), Codecs.video.getKeyVal('libvpx-vp9')),
+				audio: Codecs.audio.getKeyVal('libvorbis')
 			};
 			break;
 		case 'ogg':
 			_codecs = {
-				video: Object.assign(Codecs.video.getKeyVal('theora'), Codecs.audio.getKeyVal('flac')),
-			 audio: Codecs.audio.getKeyVal('vorbis')
+				video: Codecs.video.getKeyVal('libtheora'),
+			 audio: Object.assign(Codecs.video.getKeyVal('libvorbis'), Codecs.audio.getKeyVal('flac'))
 			};
 			break;
 		case 'mpeg':
 			_codecs = {
-				video: Object(Codecs.video.getKeyVal('mpeg1'), Codecs.video.getKeyVal('mpeg2')),
-				audio: Object(Codecs.audio.getKeyVal('mp2'), Codecs.audio.getKeyVal('mp3'))
+				video: Object(Codecs.video.getKeyVal('mpeg1video'), Codecs.video.getKeyVal('mpeg2video')),
+				audio: Object(Codecs.audio.getKeyVal('mp2'), Codecs.audio.getKeyVal('libmp3lame'))
 			};
 			break;
 		case 'mp3':
-			_codecs = {audio: Codecs.audio.getKeyVal('mp3')};
+			_codecs = {audio: Codecs.audio.getKeyVal('libmp3lame')};
 			break;
 		case 'ac3':
 			_codecs = {audio: Codecs.audio.getKeyVal('ac3')};
@@ -78,14 +77,11 @@ function GetCodecs(format) {
 		case 'flac':
 			_codecs = {audio: Codecs.audio.getKeyVal('flac')};
 			break;
-		case 'mp3':
-			_codecs = {audio: Codecs.audio.getKeyVal('mp3')};
-			break;
 		case 'weba':
-			_codecs = {audio: Codecs.audio.getKeyVal('vorbis')};
+			_codecs = {audio: Codecs.audio.getKeyVal('libvorbis')};
 			break;
 		case 'wav':
-			_codecs = {audio: Codecs.audio.getKeyVal('wav')};
+			_codecs = {audio: Codecs.audio.getKeyVal('adpcm_ima_wav')};
 			break;
 		case null:
 			_codecs = {video: {}, audio: {}};

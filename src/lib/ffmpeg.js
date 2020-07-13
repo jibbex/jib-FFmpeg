@@ -71,18 +71,23 @@ class FFmpeg {
 				const container = FFmpeg.getFormat(opts.container);
 				const args = [];
 
+				let iv = 0;
+				let ia = 0;
 				let index = 0;
+				let duration = parseInt(task.format.duration);
 
 				if(opts.acceleration && opts.acceleration !== 'no-hw') {
-					args.push(`hwaccel ${opts.acceleration}`);
+					args.push(`-hwaccel ${opts.acceleration}`);
 				}
 
 				args.push(`-i "${task.format.filepath}"`);
-				//args.push(`-f ${container}`);
+				args.push(`-strict experimental`);
+				args.push(`-f ${container}`);
 
 				if(opts.time_range) {
-					args.push(`ss ${opts.time_range[0]}`);
-					args.push(`to ${opts.time_range[1]}`);
+					duration = opts.time_range[1] - opts.time_range[0];
+					args.push(`-ss ${opts.time_range[0]}`);
+					args.push(`-to ${opts.time_range[1]}`);
 				}
 				else {
 					args.push('-ss 0');
@@ -95,14 +100,14 @@ class FFmpeg {
 								if(stream.options.active === undefined
 								|| stream.options.active === true) {
 									args.push(`-map 0:${index}`);
-
 									if(stream.options.codec_name) {
 										let codec = '';
+
 										if(stream.codec_type == 'video') {
-												codec = `-c:v:${index}`;
+												codec = `-c:v:${iv}`;
 										}
 										else if(stream.codec_type == 'audio') {
-											codec = `-c:a:${index}`;
+											codec = `-c:a:${ia}`;
 										}
 										args.push(`${codec} ${stream.options.codec_name}`);
 									}
@@ -110,21 +115,25 @@ class FFmpeg {
 									if(stream.options.bit_rate) {
 										let bitrate = '';
 										if(stream.codec_type == 'video') {
-												bitrate = `-b:v:${index}`;
+												bitrate = `-b:v:${iv}`;
 										}
 										else if(stream.codec_type == 'audio') {
-											bitrate = `-b:a:${index}`;
+											bitrate = `-b:a:${ia}`;
 										}
 										args.push(`${bitrate} ${stream.options.bit_rate}k`);
 									}
 
 									if(stream.codec_type == 'audio') {
 										if(stream.options.channels) {
-											args.push(`-ac:a:${index} ${stream.options.channels}`);
+											args.push(`-ac:a:${ia} ${stream.options.channels}`);
 										}
 										if(stream.options.frequency) {
 											//args.push(`-ac:a:${index} ${stream.options.frequency}`);
 										}
+										ia += 1;
+									}
+									else if(stream.codec_type == 'video') {
+										iv += 1;
 									}
 									index += 1;
 								}
@@ -138,9 +147,27 @@ class FFmpeg {
 				const proc = spawn(this.getBin('ffmpeg'), args, {shell: true});
 
 				proc.stderr.on('data', (data) => {
-					setImmediate(() => {
-						this._event.emit('progress', data.toString());
-					});
+					const str = data.toString();
+					const i = str.indexOf('time=') + 5;
+
+					if(i > 4) {
+						let timecode = 0;
+						let time = str.substr(i, 11);
+
+						time = time.split(':');
+
+						let h = parseInt(time[0]);
+						let m = parseInt(time[1]);
+						let s = parseInt(time[2].split('.')[0]);
+
+						if(h > 0) { timecode = h * 60 * 60 }
+						if(m > 0) { timecode += m * 60 }
+						if(s > 0) { timecode += s }
+
+						const progress = parseInt(timecode / duration * 100);
+
+						this._event.emit('progress', progress);
+					}
 				});
 
 				proc.on('close', (code) => {
