@@ -1,6 +1,6 @@
 {
-  "name": "guif-FFmpeg",
-  "productName": "guif-FFmpeg",
+  "name": "jib-FFmpeg",
+  "productName": "jib-FFmpeg",
   "version": "0.5.0",
   "description": "Yet another graphical user interface for FFmpeg.",
   "main": "./src",
@@ -16,12 +16,17 @@
   "license": "MIT",
   "config": {
     "forge": {
+     "electronPackagerConfig": {
+      "icon": "./assets/icon.png"
+     },
      "packagerConfig": {
-        "asar": false
+        "asar": false,
+        "icon": "./assets/icon.png"
       },
       "make_targets": {
         "win32": [
-          "squirrel"
+          "squirrel",
+          "zip"
         ],
         "darwin": [
           "zip"
@@ -35,7 +40,7 @@
         "packageManager": "yarn"
       },
       "electronWinstallerConfig": {
-        "name": "guif-FFmpeg"
+        "name": "jib-FFmpeg"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -45,7 +50,7 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "guif-FFmpeg"
+        "name": "jib-FFmpeg"
       }
     }
   },
