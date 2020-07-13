@@ -2747,7 +2747,7 @@ electron-packager@^11.0.0:
     semver "^5.3.0"
     yargs-parser "^9.0.2"
 
-electron-prebuilt-compile@9.1.0:
+electron-prebuilt-compile@8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/electron-prebuilt-compile/-/electron-prebuilt-compile-8.2.0.tgz#85c5ffb2f549f53daf4f470dd1ef7d1822a561f3"
   integrity sha512-vWFyfkl+CRg0+1AYo1Lvg0y8LfOkTouFQkPn8PHJWP4ZYPBM2NiDf6T/ku58w8WaRSKo+IcDzHKYPnb1hvZuaQ==
