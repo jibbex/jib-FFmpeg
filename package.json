@@ -16,12 +16,9 @@
   "license": "MIT",
   "config": {
     "forge": {
-     "electronPackagerConfig": {
-      "icon": "./assets/icon.png"
-     },
      "packagerConfig": {
         "asar": false,
-        "icon": "./assets/icon.png"
+        "icon": "D:\\Users\\m_mic\\Data\\Projekte\\ffmpeg-gui\\uiFFmpeg\\assets\\icon.png"
       },
       "make_targets": {
         "win32": [
@@ -37,7 +34,12 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "yarn"
+        "packageManager": "yarn",
+        "icon": "./assets/icon.png"
+      },
+      "electronSquirrelConfig": {
+       "iconUrl": "D:\\Users\\m_mic\\Data\\Projekte\\ffmpeg-gui\\uiFFmpeg\\assets\\icon.png",
+       "setupIcon": "./assets/icon.ico"
       },
       "electronWinstallerConfig": {
         "name": "jib-FFmpeg"

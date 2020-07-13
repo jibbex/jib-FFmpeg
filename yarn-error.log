@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js make
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js package
 
 PATH: 
   C:\Python27\;C:\Python27\Scripts;D:\Program Files\ImageMagick-6.9.3-Q16;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Users\m_mic\.dnx\bin;C:\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Microsoft\Web Platform Installer\;F:\AppData\Android\sdk;F:\AppData\Android\s;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\ManagementStudio\;C:\Program Files (x86)\Microsoft SQL Server\120\DTS\Binn\;C:\Program Files (x86)\VidoGo;C:\wamp\bin\php\php5.5.12;C:\wamp\bin\mysql\mysql5.6.17\bin;C:\wamp\bin\apache\apache2.4.9\bin;C:\Program Files (x86)\Vim\vim74;C:\wamp\bin\php\php5.5.12\ext\imagick;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;D:\clang\LLVM\bin;C:\Users\m_mic\AppData\Roaming\npm;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\WINDOWS\system32\config\systemprofile\.dnx\bin;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\nodejs;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\WiX Toolset v3.11\bin;C:\Program Files (x86)\Microsoft SDKs\Windows Kits;C:\Program Files\dotnet\;C:\Program Files\nodejs\;C:\Program Files\Java\jdk1.8.0_211\bin;;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\m_mic\.cargo\bin;E:\Neuer Ordner\FAHClient;E:\FAHClient;D:\ffmpeg\bin;C:\Users\m_mic\.cargo;C:\Users\m_mic\AppData\Local\atom\bin;D:\php-7.4.8\;
@@ -14,7 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  SyntaxError: D:\Users\m_mic\Data\Projekte\ffmpeg-gui\uiFFmpeg\package.json: Unexpected token } in JSON at position 596
+  SyntaxError: D:\Users\m_mic\Data\Projekte\ffmpeg-gui\uiFFmpeg\package.json: Unexpected token } in JSON at position 971
       at JSON.parse (<anonymous>)
       at C:\Program Files (x86)\Yarn\lib\cli.js:1625:59
       at Generator.next (<anonymous>)
@@ -42,7 +42,7 @@ npm manifest:
       "forge": {
        "packagerConfig": {
           "asar": false,
-          "icon": "./../images/icon.png",
+          "icon": "D:\\Users\\m_mic\\Data\\Projekte\\ffmpeg-gui\\uiFFmpeg\\assets\\icon.png"
         },
         "make_targets": {
           "win32": [
@@ -58,7 +58,12 @@ npm manifest:
           ]
         },
         "electronPackagerConfig": {
-          "packageManager": "yarn"
+          "packageManager": "yarn",
+          "icon": "./assets/icon.png",
+        },
+        "electronSquirrelConfig": {
+         "iconUrl": "D:\\Users\\m_mic\\Data\\Projekte\\ffmpeg-gui\\uiFFmpeg\\assets\\icon.png",
+         "setupIcon": "./assets/icon.ico"
         },
         "electronWinstallerConfig": {
           "name": "jib-FFmpeg"
