@@ -10,7 +10,7 @@
 This software uses [Node.js](https://nodejs.org/en/) and [Electron](https://electronjs.org/) to utilize JavaScript, HTML, and CSS for cross platform desktop apps.
 
 
-###FFmpeg
+### FFmpeg
 > This software depends on [FFmpeg](https://www.ffmpeg.org/), so an installed version of FFmpeg is required and the directory to the binaries must be added to the path variable.
 
 
