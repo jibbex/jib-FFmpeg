@@ -4,7 +4,7 @@
 
 *Yet another graphical user interface for FFmpeg...*
 
-**It is far from finished and still in development. You will find bugs and a lack of life enhancement features.**
+**It is far from being finished and is still under development. You will find bugs and a lack of features to improve user experience.**
 
 ### Node.js and Electron
 This software uses [Node.js](https://nodejs.org/en/) and [Electron](https://electronjs.org/) to utilize JavaScript, HTML, and CSS for cross platform desktop apps.
