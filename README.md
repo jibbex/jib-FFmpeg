@@ -13,7 +13,10 @@ This software uses [Node.js](https://nodejs.org/en/) and [Electron](https://elec
 ### FFmpeg
 > This software depends on [FFmpeg](https://www.ffmpeg.org/), so an installed version of FFmpeg is required and the directory to the binaries must be added to the path variable.
 
+---
+<img src="https://github.com/jibbex/jib-FFmpeg/blob/master/assets/2020-07-13_16-55-41.png">
 
+---
 
 ### Features
 The start and end time can be set via a slider. You can play the audio / video file to make it easier to find the desired time period. In addition, there is a possibility to crop the video content.
