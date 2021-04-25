@@ -9,8 +9,8 @@ import portfinder from 'portfinder';
 import seedrandom from 'seedrandom';
 import _ from 'lodash/core';
 import { app, BrowserWindow, ipcMain } from 'electron';
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-import { enableLiveReload } from 'electron-compile';
+//import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+//import { enableLiveReload } from 'electron-compile';
 import { queue } from 'async';
 import windowStateKeeper from 'electron-window-state';
 import ffmpeg from './lib/ffmpeg';
@@ -29,8 +29,11 @@ let mainWindow;
 let token = null;
 let files = [];
 let port = 4480;
-
-if (isDevMode) enableLiveReload( { strategy: 'react-hmr' } );
+/*
+* React hot reloading seems to causes crashes in some cases.
+*
+*/
+//if (isDevMode) enableLiveReload( { strategy: 'react-hmr' } );
 
 const tasks =  queue(async (task, callback) => {
   if(task.name == 'file_info') {
@@ -57,6 +60,15 @@ const tasks =  queue(async (task, callback) => {
           const id = Date.now() + files.length;
           const fn = path.basename(task.file);
           const im = `images/${crypto.createHash('sha1').update(fn).digest('hex')}.jpg`;
+
+          const ext = fn.split('.').pop();
+
+          if(Formats.video.find(el => el == ext)) {
+            await ffmpeg.extractJPEG(task.file, im, '00:00:10.00');
+          }
+          else if(Formats.audio.find(el => el == ext)) {
+            await ffmpeg.extractJPEG(task.file, im, '00:00:00.00');
+          }
 
           files.push(
             {
@@ -116,14 +128,14 @@ const tasks =  queue(async (task, callback) => {
     }
 
     if(isDevMode) {
-     console.log(task.file);
-     if(task.file.options) {
-      console.log(task.file.options)
-     }
-     if(task.file.streams) {
-      console.log(task.file.streams)
-     }
-     console.log(`exit code: ${code}`);
+      console.log(task.file);
+      if(task.file.options) {
+        console.log(task.file.options)
+      }
+      if(task.file.streams) {
+        console.log(task.file.streams)
+      }
+      console.log(`exit code: ${code}`);
     }
    }
    catch(error) {
@@ -184,7 +196,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/renderer/index.html`);
 
   if (isDevMode) {
-    await installExtension(REACT_DEVELOPER_TOOLS);
+    //await installExtension(REACT_DEVELOPER_TOOLS);
     mainWindow.webContents.openDevTools();
   }
   else {

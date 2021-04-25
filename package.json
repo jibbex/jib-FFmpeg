@@ -1,7 +1,7 @@
 {
   "name": "jib-FFmpeg",
   "productName": "jib-FFmpeg",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Yet another graphical user interface for FFmpeg.",
   "main": "./src",
   "scripts": {
@@ -16,9 +16,9 @@
   "license": "MIT",
   "config": {
     "forge": {
-     "packagerConfig": {
+      "packagerConfig": {
         "asar": false,
-        "icon": "D:\\Users\\m_mic\\Data\\Projekte\\ffmpeg-gui\\uiFFmpeg\\assets\\icon.png"
+        "icon": ".\\assets\\icon.png"
       },
       "make_targets": {
         "win32": [
@@ -38,8 +38,8 @@
         "icon": "./assets/icon.png"
       },
       "electronSquirrelConfig": {
-       "iconUrl": "D:\\Users\\m_mic\\Data\\Projekte\\ffmpeg-gui\\uiFFmpeg\\assets\\icon.png",
-       "setupIcon": "./assets/icon.ico"
+        "iconUrl": ".\\assets\\icon.png",
+        "setupIcon": "./assets/icon.ico"
       },
       "electronWinstallerConfig": {
         "name": "jib-FFmpeg"
@@ -61,17 +61,15 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.50",
     "async": "^3.2.0",
-    "electron-devtools-installer": "^2.1.0",
+    "electron-compile": "^6.4.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-window-state": "^5.0.3",
-    "electron-compile": "^6.4.4",
     "express": "^4.17.1",
     "fs-extra": "^9.0.0",
     "lodash": "^4.17.19",
     "portfinder": "^1.0.25",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-hot-loader": "3",
     "react-image-crop": "^8.6.2",
     "seedrandom": "^3.0.5",
     "typeface-roboto": "^0.0.75"
