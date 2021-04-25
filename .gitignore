@@ -1,3 +1,9 @@
 node_modules
 out
 .eslintcache
+images
+
+xvba_debug.log
+
+yarn.lock
+yarn-error.log
