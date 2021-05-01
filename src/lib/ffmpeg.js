@@ -96,8 +96,7 @@ class FFmpeg {
 					task.streams.forEach((stream) => {
 						if(stream.codec_type !== 'subtitle') {
 							if(stream.options) {
-								if(stream.options.active === undefined
-								|| stream.options.active === true) {
+								if(stream.options.active === undefined || stream.options.active === true) {
 									args.push(`-map 0:${index}`);
 									if(stream.options.codec_name) {
 										let codec = '';
@@ -160,7 +159,7 @@ class FFmpeg {
 				}
 
 				args.push(`-y "${opts.outFile}"`);
-				console.log(args.join(' '));
+				
 				const proc = spawn(this.getBin('ffmpeg'), args, {shell: true});
 
 				proc.stderr.on('data', (data) => {
@@ -183,20 +182,18 @@ class FFmpeg {
 							if(s > 0) { timecode += s }
 
 							const progress = parseInt(timecode / duration * 100);
-
-
-								this._on.progress(progress);
-							}
+							this._on.progress(progress);
+						}
 					}
 				});
 
 				proc.on('close', (code) => {
-						if(code == 0) {
-							resolve(code);
-						}
-						else {
-							reject(code);
-						}
+					if(code == 0) {
+						resolve(code);
+					}
+					else {
+						reject(code);
+					}
 				});
 			});
 		}
