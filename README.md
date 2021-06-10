@@ -14,7 +14,7 @@ This software uses [Node.js](https://nodejs.org/en/) and [Electron](https://elec
 > This software depends on [FFmpeg](https://www.ffmpeg.org/), so an installed version of FFmpeg is required and the directory to the binaries must be added to the path variable.
 
 ---
-<img src="assets/2020-07-13_16-55-41.png">
+<img src="assets/2020-07-13_16-55-41.png" style="border-radius:1.5em; box-shadow:0 0 1em #bbb;">
 
 ---
 
