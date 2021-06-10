@@ -1,4 +1,4 @@
-<img src="https://github.com/jibbex/jib-FFmpeg/blob/master/assets/icon.png" align="right" width="128" height="128">
+<img src="/assets/icon.png" align="right" width="128" height="128">
 
 # jib-FFmpeg
 
@@ -14,7 +14,7 @@ This software uses [Node.js](https://nodejs.org/en/) and [Electron](https://elec
 > This software depends on [FFmpeg](https://www.ffmpeg.org/), so an installed version of FFmpeg is required and the directory to the binaries must be added to the path variable.
 
 ---
-<img src="https://github.com/jibbex/jib-FFmpeg/blob/master/assets/2020-07-13_16-55-41.png">
+<img src="/assets/2020-07-13_16-55-41.png">
 
 ---
 
