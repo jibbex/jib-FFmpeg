@@ -1,4 +1,4 @@
-<img src="assets/icon.png" align="right" width="128" height="128">
+<img src="assets/icon.png" align="right" width="128" height="128" style="border-radius: 50%">
 
 # jib-FFmpeg
 
